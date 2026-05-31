@@ -1,1 +1,304 @@
-# meeting-bingo
+[meeting-bingo-4x4.html](https://github.com/user-attachments/files/28445911/meeting-bingo-4x4.html)
+# meeting-bingo<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting Bingo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f4f9; color: #333; min-height: 100vh;
+    display: flex; align-items: flex-start; justify-content: center; padding: 32px 16px;
+  }
+  .container {
+    background: white; border-radius: 16px; padding: 32px;
+    max-width: 680px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  }
+  .bingo-wrap { display: flex; gap: 20px; align-items: flex-start; }
+  .bingo-main { flex: 1; min-width: 0; }
+  .bingo-title {
+    font-size: 32px; font-weight: 700; letter-spacing: 10px;
+    color: #1a1a1a; margin-bottom: 20px; text-align: center;
+  }
+  .col-headers { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; margin-bottom: 6px; }
+  .col-hdr { text-align: center; font-size: 20px; font-weight: 700; color: #1a1a1a; padding: 4px 0; }
+  .board { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; }
+  .sq {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    text-align: center; font-size: 12px; padding: 8px; border-radius: 10px;
+    cursor: pointer; border: 2px solid #ddd; background: #fff; color: #333;
+    transition: all 0.15s; word-break: break-word; line-height: 1.3; user-select: none;
+  }
+  .sq:hover { background: #f4f4f9; border-color: #bbb; }
+  .sq.dabbed { background: #3B6D11; border-color: #3B6D11; color: #EAF3DE; font-weight: 600; }
+  .sq.win-line { background: #EF9F27; border-color: #BA7517; color: #412402; font-weight: 600; }
+  .sidebar { width: 148px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+  .stat-card { background: #f4f4f9; border-radius: 10px; padding: 14px; text-align: center; }
+  .stat-label { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-val { font-size: 32px; font-weight: 700; color: #1a1a1a; line-height: 1; }
+  .stat-sub { font-size: 11px; color: #888; margin-top: 4px; }
+  .progress-bar-bg { height: 6px; background: #e0e0e0; border-radius: 99px; margin-top: 10px; overflow: hidden; }
+  .progress-bar-fill { height: 6px; background: #3B6D11; border-radius: 99px; transition: width 0.3s; }
+  .bingo-list { font-size: 11px; color: #666; }
+  .bingo-list-item { padding: 4px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 6px; }
+  .bingo-list-item:last-child { border-bottom: none; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #EF9F27; flex-shrink: 0; }
+  .btn-row { display: flex; flex-direction: column; gap: 8px; }
+  button {
+    font-size: 13px; padding: 9px 12px; border-radius: 8px;
+    border: 1px solid #ddd; background: white; color: #333;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    gap: 6px; transition: background 0.15s; font-family: inherit; width: 100%;
+  }
+  button:hover { background: #f4f4f9; }
+  .btn-primary { background: #1a1a1a; color: white; border-color: #1a1a1a; }
+  .btn-primary:hover { background: #333; }
+  .win-banner {
+    margin-top: 14px; padding: 14px; border-radius: 10px;
+    background: #EAF3DE; border: 1px solid #97C459; display: none; text-align: center;
+  }
+  .win-banner.show { display: block; }
+  .win-text { font-size: 22px; font-weight: 700; letter-spacing: 6px; color: #27500A; }
+  .win-sub { font-size: 13px; color: #3B6D11; margin-top: 6px; }
+  .creator-view { max-width: 520px; margin: 0 auto; }
+  .creator-view h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .creator-view p { font-size: 14px; color: #666; margin-bottom: 16px; }
+  textarea {
+    width: 100%; height: 200px; padding: 12px; font-size: 14px;
+    font-family: inherit; border: 1px solid #ddd; border-radius: 8px;
+    resize: vertical; margin-bottom: 14px; color: #333; background: #fff;
+  }
+  .err { color: #c0392b; font-size: 13px; margin-top: 8px; }
+  .link-box {
+    margin-top: 14px; padding: 12px 16px; background: #f4f4f9;
+    border-radius: 8px; border: 1px solid #ddd;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .link-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #555; font-family: monospace; font-size: 12px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="creator-view" class="creator-view">
+    <h2>Meeting bingo — creator</h2>
+    <p>Enter at least 16 events (one per line) to fill the 4×4 board, then generate a link to share with your team.</p>
+    <textarea id="events-input" placeholder="Multitasking spotted &#10;GDPR or compliance mentioned&#10;Someone eating (on mute!)&#10;&quot;Risk&quot; gets mentioned&#10;Sudden AI panic discussion&#10;&quot;Business is doing well&quot; is said&#10;Coffee or tea mug sighting&#10;Someone using a virtual background&#10;A policy gets referenced&#10;Compliance mention&#10;Can you see my screen?&#10;On mute while talking&#10;&quot;One last point…&quot;&#10;Someone drops off the call&#10;Camera issues moment&#10;Someone joins late"></textarea>
+    <button class="btn-primary" style="width:auto;padding:10px 22px;" onclick="generateLink()">Generate bingo link</button>
+    <div id="link-box" class="link-box hidden">
+      <span class="link-text" id="link-text"></span>
+      <button onclick="copyGeneratedLink()" id="copy-btn" style="width:auto;flex-shrink:0;">Copy</button>
+    </div>
+    <p class="err" id="err"></p>
+  </div>
+
+  <div id="player-view" class="hidden">
+    <div class="bingo-wrap">
+      <div class="bingo-main">
+        <div class="bingo-title">B &nbsp; I &nbsp; N &nbsp; G</div>
+        <div class="col-headers">
+          <div class="col-hdr">B</div>
+          <div class="col-hdr">I</div>
+          <div class="col-hdr">N</div>
+          <div class="col-hdr">G</div>
+        </div>
+        <div class="board" id="board"></div>
+        <div class="win-banner" id="win-banner">
+          <div class="win-text">B I N G O !</div>
+          <div class="win-sub">You got a line! Keep going for more.</div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="stat-card">
+          <div class="stat-label">Marked</div>
+          <div class="stat-val" id="count">0</div>
+          <div class="stat-sub">of 16 tiles</div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress" style="width:0%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Bingos</div>
+          <div class="stat-val" id="bingo-count">0</div>
+          <div class="stat-sub">lines complete</div>
+        </div>
+        <div class="stat-card" id="bingo-log-card" style="display:none;">
+          <div class="stat-label" style="margin-bottom:8px;">Completed</div>
+          <div class="bingo-list" id="bingo-log"></div>
+        </div>
+        <div class="btn-row">
+          <button onclick="resetBoard()">&#8635; New card</button>
+          <button class="btn-primary" onclick="copyShareLink()"><span id="share-label">&#128279; Share link</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ALL_EVENTS = [
+  "Multitasking spotted \ud83d\udc40",
+  "GDPR or compliance mentioned",
+  "Someone eating (on mute!) \ud83c\udf6a",
+  '"Risk" gets mentioned',
+  "Sudden AI panic discussion",
+  '"Business is doing well" is said',
+  "Coffee or tea mug sighting \u2615",
+  "Someone using a virtual background",
+  "A policy gets referenced",
+  "Compliance mention",
+  '"Can you see my screen?"',
+  "On mute while talking \ud83c\udfa4",
+  '"One last point\u2026"',
+  "Someone drops off the call",
+  "Camera issues moment",
+  "Someone joins late",
+  "Meeting could\u2019ve been an email",
+  '"Going forward\u2026"',
+  "Awkward silence after a question",
+  "Someone\u2019s kid/pet interrupts",
+  '"Let\u2019s circle back"',
+  '"To be fair\u2026"',
+  "Presenter shares wrong screen",
+  "WiFi/connection issues"
+];
+
+const LINES = [
+  [0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],
+  [0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],
+  [0,5,10,15],[3,6,9,12]
+];
+const LINE_NAMES = ["Row 1","Row 2","Row 3","Row 4","Col B","Col I","Col N","Col G","Diag \u2198","Diag \u2196"];
+
+let currentEvents = ALL_EVENTS;
+let boardEvents = [], dabbed = new Set(), wonLines = new Set();
+
+function shuffle(arr) {
+  let a = [...arr];
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function buildBoard(events) {
+  currentEvents = events;
+  boardEvents = shuffle(events).slice(0, 16);
+  dabbed = new Set();
+  wonLines = new Set();
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  document.getElementById('win-banner').classList.remove('show');
+  document.getElementById('bingo-log-card').style.display = 'none';
+  document.getElementById('bingo-log').innerHTML = '';
+  boardEvents.forEach((text, i) => {
+    const sq = document.createElement('div');
+    sq.className = 'sq';
+    sq.textContent = text;
+    sq.addEventListener('click', () => toggleDab(i));
+    board.appendChild(sq);
+  });
+  updateUI();
+}
+
+function toggleDab(i) {
+  if (dabbed.has(i)) dabbed.delete(i); else dabbed.add(i);
+  updateUI();
+}
+
+function updateUI() {
+  const sqs = document.querySelectorAll('#board .sq');
+  const winIdxs = new Set([...wonLines].flatMap(k => k.split(',').map(Number)));
+  sqs.forEach((sq, i) => {
+    sq.classList.remove('dabbed','win-line');
+    if (winIdxs.has(i)) sq.classList.add('win-line');
+    else if (dabbed.has(i)) sq.classList.add('dabbed');
+  });
+
+  const count = dabbed.size;
+  document.getElementById('count').textContent = count;
+  document.getElementById('progress').style.width = Math.round(count / 16 * 100) + '%';
+
+  let newWin = false;
+  LINES.forEach((line, li) => {
+    const key = line.join(',');
+    if (!wonLines.has(key) && line.every(i => dabbed.has(i))) {
+      wonLines.add(key);
+      newWin = true;
+      const item = document.createElement('div');
+      item.className = 'bingo-list-item';
+      item.innerHTML = '<div class="dot"></div>' + LINE_NAMES[li];
+      document.getElementById('bingo-log').appendChild(item);
+    }
+  });
+
+  if (wonLines.size > 0) {
+    document.getElementById('bingo-log-card').style.display = 'block';
+    const winIdxsFinal = new Set([...wonLines].flatMap(k => k.split(',').map(Number)));
+    sqs.forEach((sq, i) => {
+      sq.classList.remove('dabbed','win-line');
+      if (winIdxsFinal.has(i)) sq.classList.add('win-line');
+      else if (dabbed.has(i)) sq.classList.add('dabbed');
+    });
+  }
+
+  document.getElementById('bingo-count').textContent = wonLines.size;
+  if (newWin) document.getElementById('win-banner').classList.add('show');
+}
+
+function resetBoard() { buildBoard(currentEvents); }
+
+function copyShareLink() {
+  const encoded = encodeURIComponent(currentEvents.join('|'));
+  const base = window.location.href.split('?')[0];
+  const link = base + '?events=' + encoded;
+  navigator.clipboard.writeText(link).then(() => {
+    const lbl = document.getElementById('share-label');
+    lbl.textContent = '\u2713 Copied!';
+    setTimeout(() => { lbl.textContent = '\ud83d\udd17 Share link'; }, 2000);
+  }).catch(() => { prompt('Copy this link to share with your team:', link); });
+}
+
+function generateLink() {
+  const text = document.getElementById('events-input').value;
+  const events = text.split('\n').map(e => e.trim()).filter(e => e.length > 0);
+  const err = document.getElementById('err');
+  if (events.length < 16) {
+    err.textContent = 'Need at least 16 events. You have ' + events.length + '.';
+    return;
+  }
+  err.textContent = '';
+  const encoded = encodeURIComponent(events.join('|'));
+  const base = window.location.href.split('?')[0];
+  window._generatedLink = base + '?events=' + encoded;
+  document.getElementById('link-text').textContent = window._generatedLink;
+  document.getElementById('link-box').classList.remove('hidden');
+}
+
+function copyGeneratedLink() {
+  if (!window._generatedLink) return;
+  navigator.clipboard.writeText(window._generatedLink).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '\u2713 Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  }).catch(() => { prompt('Copy this link:', window._generatedLink); });
+}
+
+function init() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get('events');
+  if (raw) {
+    document.getElementById('creator-view').classList.add('hidden');
+    document.getElementById('player-view').classList.remove('hidden');
+    buildBoard(raw.split('|'));
+  }
+}
+
+init();
+</script>
+</body>
+</html>
