@@ -1,50 +1,86 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Playfair Display", "Didot", "Bodoni 72", "Bodoni MT", Georgia, ui-serif, serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  /* Rounded system fonts: friendly look, no downloads, works offline. */
+  --font-display: ui-rounded, "SF Pro Rounded", "Nunito", "Quicksand", "Varela Round", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --font-sans: ui-rounded, "SF Pro Rounded", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  --color-gold-50: #fdf9ec;
-  --color-gold-100: #f8efcc;
-  --color-gold-200: #f1dd95;
-  --color-gold-300: #e8c766;
-  --color-gold-400: #dcb145;
-  --color-gold-500: #c9962e;
-  --color-gold-600: #a87623;
-  --color-gold-700: #82571f;
-  --color-ink-950: #07070b;
-  --color-ink-900: #0e0e15;
-  --color-ink-800: #17171f;
-  --color-ink-700: #23232e;
-  --color-ink-600: #34343f;
+  --color-cream: #fffaf3;
+  --color-plum-900: #2f2140;
+  --color-plum-700: #5b4870;
+  --color-plum-500: #8a7a9c;
+  --color-plum-300: #cfc5db;
+  --color-plum-100: #f1ecf6;
 
-  --animate-shimmer: shimmer 3s linear infinite;
-  --animate-pop: pop 0.6s cubic-bezier(0.2, 1.4, 0.4, 1) both;
-  --animate-fade-up: fade-up 0.5s ease-out both;
+  --color-bubblegum-100: #ffe4f0;
+  --color-bubblegum-200: #ffcce2;
+  --color-bubblegum-300: #ffa8cc;
+  --color-bubblegum-400: #ff7eb6;
+  --color-bubblegum-500: #f0559b;
+
+  --color-lavender-100: #efeaff;
+  --color-lavender-200: #ddd3ff;
+  --color-lavender-300: #c4b5fd;
+  --color-lavender-400: #a78bfa;
+
+  --color-mint-100: #e3f9ef;
+  --color-mint-200: #c3f0dc;
+  --color-mint-300: #8fe3be;
+  --color-mint-400: #4fcf9a;
+
+  --color-peach-100: #fff0e3;
+  --color-peach-200: #ffdcc2;
+  --color-peach-300: #ffbf94;
+
+  --color-sky-100: #e6f3ff;
+  --color-sky-200: #cce6ff;
+  --color-sky-300: #9fd0ff;
+
+  --color-butter-100: #fffbe0;
+  --color-butter-200: #fff3b0;
+  --color-butter-300: #ffe67a;
+
+  --shadow-sticker: 4px 4px 0 0 var(--color-plum-900);
+  --shadow-sticker-sm: 2px 2px 0 0 var(--color-plum-900);
+  --shadow-sticker-lg: 6px 6px 0 0 var(--color-plum-900);
+
+  --animate-pop: pop 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+  --animate-fade-up: fade-up 0.45s ease-out both;
   --animate-count: count 1s ease-in-out both;
-  --animate-pulse-gold: pulse-gold 1.2s ease-in-out infinite;
+  --animate-wiggle: wiggle 2.4s ease-in-out infinite;
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-jelly: jelly 1.6s ease-in-out infinite;
 
-  @keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
   @keyframes pop {
-    0% { transform: scale(0.3); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    0% { transform: scale(0.3) rotate(-8deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
   }
   @keyframes fade-up {
-    0% { transform: translateY(12px); opacity: 0; }
+    0% { transform: translateY(14px); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
   }
   @keyframes count {
-    0% { transform: scale(2.2); opacity: 0; }
-    25% { transform: scale(1); opacity: 1; }
-    80% { transform: scale(0.9); opacity: 1; }
-    100% { transform: scale(0.6); opacity: 0; }
+    0% { transform: scale(2.4) rotate(-12deg); opacity: 0; }
+    25% { transform: scale(1) rotate(0); opacity: 1; }
+    80% { transform: scale(0.95) rotate(4deg); opacity: 1; }
+    100% { transform: scale(0.5) rotate(12deg); opacity: 0; }
   }
-  @keyframes pulse-gold {
-    0%, 100% { box-shadow: 0 0 0 0 rgb(220 177 69 / 0.5); }
-    50% { box-shadow: 0 0 0 14px rgb(220 177 69 / 0); }
+  @keyframes wiggle {
+    0%, 70%, 100% { transform: rotate(0); }
+    75% { transform: rotate(-10deg); }
+    80% { transform: rotate(9deg); }
+    85% { transform: rotate(-6deg); }
+    90% { transform: rotate(4deg); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes jelly {
+    0%, 100% { transform: scale(1, 1); }
+    30% { transform: scale(1.06, 0.94); }
+    50% { transform: scale(0.96, 1.04); }
+    70% { transform: scale(1.02, 0.98); }
   }
 }
 
@@ -53,30 +89,48 @@ html {
 }
 
 body {
-  background: var(--color-ink-950);
-  color: #f4f1ea;
+  background: var(--color-cream);
+  color: var(--color-plum-900);
 }
 
-.text-gold-gradient {
-  background: linear-gradient(90deg, #a87623, #f1dd95, #dcb145, #f8efcc, #a87623);
+/* Soft pastel blobs behind everything. */
+.bg-party {
+  background:
+    radial-gradient(circle at 8% 12%, var(--color-bubblegum-200) 0, transparent 28%),
+    radial-gradient(circle at 92% 8%, var(--color-sky-200) 0, transparent 26%),
+    radial-gradient(circle at 85% 88%, var(--color-mint-200) 0, transparent 30%),
+    radial-gradient(circle at 12% 92%, var(--color-lavender-200) 0, transparent 30%),
+    radial-gradient(circle at 50% 50%, var(--color-butter-100) 0, transparent 60%),
+    var(--color-cream);
+  background-attachment: fixed;
+}
+
+.text-rainbow {
+  background: linear-gradient(90deg, #e8458f, #8b5cf6, #1fa774, #f08a3e, #e8458f);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: var(--animate-shimmer);
+  animation: rainbow 6s linear infinite;
+}
+@keyframes rainbow {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
-.bg-stage {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgb(220 177 69 / 0.18), transparent 70%),
-    radial-gradient(ellipse 60% 40% at 50% 110%, rgb(130 87 31 / 0.25), transparent 70%),
-    var(--color-ink-950);
+/* Chunky "sticker" button press. */
+.press {
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-
-.gold-border {
-  border: 1px solid rgb(220 177 69 / 0.35);
+.press:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+}
+.press:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .text-gold-gradient { animation: none; }
+  .text-rainbow { animation: none; }
+  .animate-wiggle, .animate-float, .animate-jelly { animation: none; }
 }

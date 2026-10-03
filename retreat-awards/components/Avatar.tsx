@@ -1,12 +1,12 @@
 const PALETTE = [
-  "from-amber-300 to-yellow-600",
-  "from-rose-300 to-rose-600",
-  "from-sky-300 to-indigo-600",
-  "from-emerald-300 to-teal-600",
-  "from-violet-300 to-purple-600",
-  "from-orange-300 to-red-600",
-  "from-cyan-300 to-blue-600",
-  "from-fuchsia-300 to-pink-600",
+  "from-bubblegum-200 to-bubblegum-400",
+  "from-lavender-200 to-lavender-400",
+  "from-mint-200 to-mint-400",
+  "from-peach-100 to-peach-300",
+  "from-sky-100 to-sky-300",
+  "from-butter-100 to-butter-300",
+  "from-bubblegum-100 to-lavender-300",
+  "from-mint-100 to-sky-300",
 ];
 
 function hash(s: string) {
@@ -24,8 +24,8 @@ export default function Avatar({ name, size = 48, className = "" }: { name: stri
   return (
     <span
       aria-hidden
-      className={`inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br font-semibold text-ink-950 shadow-inner ${PALETTE[hash(name) % PALETTE.length]} ${className}`}
-      style={{ width: size, height: size, fontSize: size * 0.38 }}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full border-2 border-plum-900 bg-gradient-to-br font-display font-extrabold text-plum-900 ${PALETTE[hash(name) % PALETTE.length]} ${className}`}
+      style={{ width: size, height: size, fontSize: size * 0.36 }}
     >
       {initials(name)}
     </span>
